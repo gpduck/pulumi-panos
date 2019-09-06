@@ -30,9 +30,9 @@ const (
 	// packages:
 	mainPkg = "panos"
 	// modules:
-	mainMod   = "index"       // the root index
-	panorama  = "panorama"    // Panorama
-	firewall  = "firewall"    // Firewall
+	mainMod  = "index"    // the root index
+	panorama = "panorama" // Panorama
+	firewall = "firewall" // Firewall
 )
 
 // makeMember manufactures a type token for the package and the given module and type.
@@ -62,11 +62,14 @@ func makeResource(mod string, res string) tokens.Type {
 }
 
 // boolRef returns a reference to the bool argument.
+/*
 func boolRef(b bool) *bool {
 	return &b
 }
+*/
 
 // stringValue gets a string value from a property map if present, else ""
+/*
 func stringValue(vars resource.PropertyMap, prop resource.PropertyKey) string {
 	val, ok := vars[prop]
 	if ok && val.IsString() {
@@ -74,6 +77,7 @@ func stringValue(vars resource.PropertyMap, prop resource.PropertyKey) string {
 	}
 	return ""
 }
+*/
 
 // preConfigureCallback is called before the providerConfigure function of the underlying provider.
 // It should validate that the provider can be configured, and provide actionable errors in the case
@@ -84,7 +88,7 @@ func preConfigureCallback(vars resource.PropertyMap, c *terraform.ResourceConfig
 }
 
 // managedByPulumi is a default used for some managed resources, in the absence of something more meaningful.
-var managedByPulumi = &tfbridge.DefaultInfo{Value: "Managed by Pulumi"}
+//var managedByPulumi = &tfbridge.DefaultInfo{Value: "Managed by Pulumi"}
 
 // Provider returns additional overlaid schema and metadata associated with the provider..
 func Provider() tfbridge.ProviderInfo {
@@ -100,7 +104,7 @@ func Provider() tfbridge.ProviderInfo {
 		License:     "Apache-2.0",
 		Homepage:    "https://pulumi.io",
 		Repository:  "https://github.com/gpduck/pulumi-panos",
-		Config:      map[string]*tfbridge.SchemaInfo{
+		Config: map[string]*tfbridge.SchemaInfo{
 			// Add any required configuration here, or remove the example below if
 			// no additional points are required.
 			// "region": {
@@ -131,7 +135,7 @@ func Provider() tfbridge.ProviderInfo {
 			},
 		},
 		PreConfigureCallback: preConfigureCallback,
-		Resources:            map[string]*tfbridge.ResourceInfo{
+		Resources: map[string]*tfbridge.ResourceInfo{
 			// Map each resource in the Terraform provider to a Pulumi type. Two examples
 			// are below - the single line form is the common case. The multi-line form is
 			// needed only if you wish to override types or other default options.
@@ -144,16 +148,17 @@ func Provider() tfbridge.ProviderInfo {
 			// 		"tags": {Type: makeType(mainPkg, "Tags")},
 			// 	},
 			// },
-			"panos_panorama_address_group": { Tok: makeResource(panorama, "AddressGroup")},
-			"panos_panorama_address_object": { Tok: makeResource(panorama, "Address")},
-			"panos_panorama_administrative_tag": { Tok: makeResource(panorama, "AdministrativeTag")},
+			"panos_panorama_address_group":      {Tok: makeResource(panorama, "AddressGroup")},
+			"panos_panorama_address_object":     {Tok: makeResource(panorama, "Address")},
+			"panos_panorama_administrative_tag": {Tok: makeResource(panorama, "AdministrativeTag")},
+			"panos_address_group":               {Tok: makeResource(firewall, "AddressGroup")},
 		},
 		DataSources: map[string]*tfbridge.DataSourceInfo{
 			// Map each resource in the Terraform provider to a Pulumi function. An example
 			// is below.
 			// "aws_ami": {Tok: makeDataSource(mainMod, "getAmi")},
-			"panos_panorama_plugin": { Tok: makeDataSource(panorama, "getPlugin")},
-			"panos_system_info": { Tok: makeDataSource(mainMod, "getSystemInfo")},
+			"panos_panorama_plugin": {Tok: makeDataSource(panorama, "getPlugin")},
+			"panos_system_info":     {Tok: makeDataSource(mainMod, "getSystemInfo")},
 		},
 		JavaScript: &tfbridge.JavaScriptInfo{
 			// List any npm dependencies and their versions
