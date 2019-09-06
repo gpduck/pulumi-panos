@@ -110,25 +110,21 @@ func Provider() tfbridge.ProviderInfo {
 			// 	},
 			// },
 			"hostname": {
-				Type: makeType("hostname", "Hostname"),
 				Default: &tfbridge.DefaultInfo{
 					EnvVars: []string{"PANOS_HOSTNAME"},
 				},
 			},
 			"username": {
-				Type: makeType("username", "Username"),
 				Default: &tfbridge.DefaultInfo{
 					EnvVars: []string{"PANOS_USERNAME"},
 				},
 			},
 			"password": {
-				Type: makeType("password", "Password"),
 				Default: &tfbridge.DefaultInfo{
 					EnvVars: []string{"PANOS_PASSWORD"},
 				},
 			},
 			"apiKey": {
-				Type: makeType("apiKey", "ApiKey"),
 				Default: &tfbridge.DefaultInfo{
 					EnvVars: []string{"PANOS_API_KEY"},
 				},
@@ -176,7 +172,7 @@ func Provider() tfbridge.ProviderInfo {
 		Python: &tfbridge.PythonInfo{
 			// List any Python dependencies and their version ranges
 			Requires: map[string]string{
-				"pulumi": ">=0.17.28",
+				"pulumi": ">=1.0.0,<2.0.0",
 			},
 		},
 	}
