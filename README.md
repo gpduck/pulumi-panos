@@ -14,13 +14,13 @@ Modify this README to describe:
 
 *Note: Go 1.12 is needed to build Pulumi providers using Go Modules. Currently, we recommend pinning the version in `.travis.yml` to `1.12.1` to work around an issue with running later versions on Travis CI.*
 
-First, clone this repo with the name of the desired provider in place of `xyz`:
+First, clone this repo with the name of the desired provider in place of `panos`:
 
 ```
-git clone https://github.com/pulumi/pulumi-tf-provider-boilerplate pulumi-xyz
+git clone https://github.com/pulumi/pulumi-tf-provider-boilerplate pulumi-panos
 ```
 
-Second, replace references to `xyz` with the name of your provider:
+Second, replace references to `panos` with the name of your provider:
 
 ```
 make prepare NAME=foo REPOSITORY=github.com/pulumi/pulumi-foo
@@ -41,7 +41,7 @@ In the root of the repository, run:
 
 - `go get github.com/pulumi/scripts/gomod-doccopy` (Note: do not set `GO111MODULE=on` here)
 - `GO111MODULE=on go get github.com/pulumi/pulumi-terraform@master`
-- `GO111MODULE=on go get github.com/terraform-providers/terraform-provider-xyz` (where `xyz` is the name of the provider)
+- `GO111MODULE=on go get github.com/terraform-providers/terraform-provider-panos` (where `panos` is the name of the provider)
 - `GO111MODULE=on go mod vendor`
 - `make ensure`
 
@@ -59,30 +59,32 @@ This package is available in many languages in the standard packaging formats.
 
 To use from JavaScript or TypeScript in Node.js, install using either `npm`:
 
-    $ npm install @pulumi/xyx
+    $ npm install @pulumi/panos
 
 or `yarn`:
 
-    $ yarn add @pulumi/xyx
+    $ yarn add @pulumi/panos
 
 ### Python
 
 To use from Python, install using `pip`:
 
-    $ pip install pulumi_xyx
+    $ pip install pulumi_panos
 
 ### Go
 
 To use from Go, use `go get` to grab the latest version of the library
 
-    $ go get github.com/pulumi/pulumi-xyz/sdk/go/...
+    $ go get github.com/pulumi/pulumi-panos/sdk/go/...
 
 ## Configuration
 
-The following configuration points are available for the `xyz` provider:
+The following configuration points are available for the `panos` provider:
 
-- `xyz:apiKey` (environment: `XYZ_API_KEY`) - the API key for `xyz`
-- `xyz:region` (environment: `XYZ_REGION`) - the region in which to deploy resources
+- `panos:apiKey` (environment: `PANOS_API_KEY`) - the API key for the firewall.  If provided the username and password are ignored.
+- `panos:username` (environment: `PANOS_USERNAME`) - the username to authenticate to the firewall as
+- `panos:password` (environment: `PANOS_PASSWORD`) - the password for the given username
+- `panos:hostname` (environment: `PANOS_HOSTNAME`) - the hostname/IP address of the firewall
 
 ## Reference
 

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package xyz
+package panos
 
 import (
 	"unicode"
@@ -22,15 +22,17 @@ import (
 	"github.com/pulumi/pulumi-terraform/pkg/tfbridge"
 	"github.com/pulumi/pulumi/pkg/resource"
 	"github.com/pulumi/pulumi/pkg/tokens"
-	"github.com/terraform-providers/terraform-provider-xyz/xyz"
+	panos "github.com/terraform-providers/terraform-provider-panos/panos"
 )
 
 // all of the token components used below.
 const (
 	// packages:
-	mainPkg = "xyz"
+	mainPkg = "panos"
 	// modules:
-	mainMod = "index" // the y module
+	mainMod   = "index"       // the root index
+	panorama  = "panorama"    // Panorama
+	firewall  = "firewall"    // Firewall
 )
 
 // makeMember manufactures a type token for the package and the given module and type.
@@ -87,17 +89,17 @@ var managedByPulumi = &tfbridge.DefaultInfo{Value: "Managed by Pulumi"}
 // Provider returns additional overlaid schema and metadata associated with the provider..
 func Provider() tfbridge.ProviderInfo {
 	// Instantiate the Terraform provider
-	p := xyz.Provider().(*schema.Provider)
+	p := panos.Provider().(*schema.Provider)
 
 	// Create a Pulumi provider mapping
 	prov := tfbridge.ProviderInfo{
 		P:           p,
-		Name:        "xyz",
-		Description: "A Pulumi package for creating and managing xyz cloud resources.",
-		Keywords:    []string{"pulumi", "xyz"},
+		Name:        "panos",
+		Description: "A Pulumi package for creating and managing panos resources.",
+		Keywords:    []string{"pulumi", "panos"},
 		License:     "Apache-2.0",
 		Homepage:    "https://pulumi.io",
-		Repository:  "https://github.com/pulumi/pulumi-xyz",
+		Repository:  "https://github.com/gpduck/pulumi-panos",
 		Config:      map[string]*tfbridge.SchemaInfo{
 			// Add any required configuration here, or remove the example below if
 			// no additional points are required.
@@ -107,6 +109,30 @@ func Provider() tfbridge.ProviderInfo {
 			// 		EnvVars: []string{"AWS_REGION", "AWS_DEFAULT_REGION"},
 			// 	},
 			// },
+			"hostname": {
+				Type: makeType("hostname", "Hostname"),
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"PANOS_HOSTNAME"},
+				},
+			},
+			"username": {
+				Type: makeType("username", "Username"),
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"PANOS_USERNAME"},
+				},
+			},
+			"password": {
+				Type: makeType("password", "Password"),
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"PANOS_PASSWORD"},
+				},
+			},
+			"apiKey": {
+				Type: makeType("apiKey", "ApiKey"),
+				Default: &tfbridge.DefaultInfo{
+					EnvVars: []string{"PANOS_API_KEY"},
+				},
+			},
 		},
 		PreConfigureCallback: preConfigureCallback,
 		Resources:            map[string]*tfbridge.ResourceInfo{
@@ -122,11 +148,16 @@ func Provider() tfbridge.ProviderInfo {
 			// 		"tags": {Type: makeType(mainPkg, "Tags")},
 			// 	},
 			// },
+			"panos_panorama_address_group": { Tok: makeResource(panorama, "AddressGroup")},
+			"panos_panorama_address_object": { Tok: makeResource(panorama, "Address")},
+			"panos_panorama_administrative_tag": { Tok: makeResource(panorama, "AdministrativeTag")},
 		},
 		DataSources: map[string]*tfbridge.DataSourceInfo{
 			// Map each resource in the Terraform provider to a Pulumi function. An example
 			// is below.
 			// "aws_ami": {Tok: makeDataSource(mainMod, "getAmi")},
+			"panos_panorama_plugin": { Tok: makeDataSource(panorama, "getPlugin")},
+			"panos_system_info": { Tok: makeDataSource(mainMod, "getSystemInfo")},
 		},
 		JavaScript: &tfbridge.JavaScriptInfo{
 			// List any npm dependencies and their versions
